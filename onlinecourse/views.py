@@ -110,11 +110,13 @@ def enroll(request, course_id):
          # Redirect to show_exam_result with the submission id
 
 def submit(request, course_id):
-    Enrollment.objects.get(user=user,course=course)
-    Submission.objects.create(enrollment=enrollment)
-    extract_answers(request)
+    user = request.User
+    course = get_object_or_404(Course, pk=course_id)
+    enroll = Enrollment.objects.get(user=user,course=course)
+    submission = Submission.objects.create(enrollment=enroll)
+    submission.append(submitted_anwsers)
 
-    return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(course.id,)))
+    return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(course.id,submission.id)))
 
 def extract_answers(request):
     submitted_anwsers = []
@@ -135,6 +137,3 @@ def show_exam_result(request, course_id, submission_id):
     Course.objects.get(name=course)
     Submission.objects.get(enrollment=enrollment)
     is_get_score(selected_ids=submitted_anwsers)
-
-
-
