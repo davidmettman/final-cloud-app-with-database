@@ -145,7 +145,8 @@ def show_exam_result(request, course_id, submission_id):
     questions = Question.objects.values_list('question_text')
     for i in submit.choices.all().filter(is_correct=True).values_list('question_id'):
         score += Question.objects.filter(id=i[0]).first().grade
-        count=Question.objects.filter(lesson=course).count()    
+        count=Question.objects.filter(lesson=course).count()
+            
     context['selected'] = selected
     context['grade'] = int(score/count * 100)
     context['course'] = course
