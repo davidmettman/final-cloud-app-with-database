@@ -138,6 +138,7 @@ def extract_answers(request):
 
 def show_exam_result(request, course_id, submission_id):
     context = {}
+    user = request.user
     course = Course.objects.get(id = course_id)
     submit = Submission.objects.get(id = submission_id)
     selected = Submission.objects.filter(id = submission_id).values_list('choices',flat = True)
@@ -146,7 +147,8 @@ def show_exam_result(request, course_id, submission_id):
     for i in submit.choices.all().filter(is_correct=True).values_list('question_id'):
         score += Question.objects.filter(id=i[0]).first().grade
         count=Question.objects.filter(lesson=course).count()
-            
+  
+    context['user'] = user
     context['selected'] = selected
     context['grade'] = int(score/count * 100)
     context['course'] = course
