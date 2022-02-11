@@ -57,14 +57,18 @@
                 {% for choice in question.choice_set.all %}
                 <div class="form-check">
                     <label class="form-check-label">
-                    {% if choice.is_correct %}  
-                        <div style="color:#4AAA46;">Correct answer: {{ choice.choice_text }}</div>
-                    {% else %}
-                        {% if choice %}
-                            {{ submit }}
-                            {{ choice.choice_text }}
+                    {{ check }}
+                    {% if choice.id in selected %}  
+                        {% if choice.is_correct %}
+                            <div style="color:#4AAA46;">Correct answer: {{ choice.choice_text }}</div>
                         {% else %}
-                        <div style="color:#EFC046;">Not selected: {{ choice.choice_text}}</div>
+                            <div style="color:#FF0000;">Incorrect answer: {{ choice.choice_text }}</div>
+                        {% endif %}
+                    {% else %}
+                        {% if choice.is_correct %}
+                            <div style="color:#EFC046;">Not selected: {{ choice.choice_text}}</div>
+                        {% else %}
+                            {{ choice.choice_text }}
                         {% endif %}
                     {% endif %}
                     </label>

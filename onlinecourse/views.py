@@ -143,14 +143,27 @@ def show_exam_result(request, course_id, submission_id):
     submit = Submission.objects.get(id = submission_id)
     selected = Submission.objects.filter(id = submission_id).values_list('choices',flat = True)
     score = 0
+    correct = [None,None]
+
     questions = Question.objects.values_list('question_text')
-    for i in submit.choices.all().filter(is_correct=True).values_list('question_id'):
-        score += Question.objects.filter(id=i[0]).first().grade
-        count=Question.objects.filter(lesson=course).count()
-  
+        
+    question_count=Question.objects.filter(lesson=course).count()
+    for q in range(question_count):
+        all_q = submit.choices.all().filter(question = q)
+        for a in all_q:
+            if a in submit.choices.all().filter(is_correct=True):
+                if correct[q] == 1:
+                    correct[q] = 1
+                else:
+                    correct[q] = correct[q] + 1
+            else:
+                correct[q] = 0
+        score = score + correct[q]
+
+
     context['user'] = user
     context['selected'] = selected
-    context['grade'] = int(score/count * 100)
+    context['grade'] = int(score * 100)
     context['course'] = course
     context['question_text'] = questions
     return  render(request, 'onlinecourse/exam_result_bootstrap.html', context)
